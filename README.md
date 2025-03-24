@@ -21,6 +21,13 @@ You can create a conda environment named 'murre' by running:
 conda env create -f environment.yml
 ```
 
+Alternatively, you can use our Homee-specific environment file which contains all the dependencies that have been verified to work on our development systems:
+```
+conda env create -f environment_homee.yml
+
+conda activate murre_homee
+```
+
 ## Checkpoint
 The pretrained model weights can be downloaded from [here](https://drive.google.com/file/d/1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa/view?usp=sharing).
 
