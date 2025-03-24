@@ -21,9 +21,23 @@ You can create a conda environment named 'murre' by running:
 conda env create -f environment.yml
 ```
 
+Alternatively, you can use our Homee-specific environment file which contains all the dependencies that have been verified to work on our development systems:
+```
+conda env create -f environment_homee.yml
+
+conda activate murre_homee
+```
+
 ## Checkpoint
 The pretrained model weights can be downloaded from [here](https://drive.google.com/file/d/1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa/view?usp=sharing).
 
+You can use gdown to download the checkpoint directly:
+```
+pip install gdown
+gdown 1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa
+
+unzip Murre-ckpt.zip
+```
 
 ## Inference
 
@@ -56,6 +70,21 @@ python tsdf_fusion.py --image_dir ${your_rgb_path} --depth_dir ${your_depth_path
 ```
 
 Please pass in the depth maps produced by Murre and camera parameters parsed in the first step.
+
+### Running the Entire Pipeline Automatically
+
+We provide a convenient script to run the entire pipeline automatically:
+
+```
+bash run_whole.sh ${your_data_directory} ${your_desired_resolution}
+```
+
+This script will:
+1. Parse the SfM output from COLMAP
+2. Run the Murre model for SfM-guided monocular depth estimation
+3. Perform TSDF fusion to generate the final 3D mesh
+
+The script expects your data to be organized with COLMAP results in `${your_data_directory}/colmap/colmap/0/` and will save all intermediate outputs in the appropriate subfolders within your data directory.
 
 ## Citation
 

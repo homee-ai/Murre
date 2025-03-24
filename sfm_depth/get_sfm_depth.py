@@ -1,6 +1,7 @@
 import os, numpy as np, cv2, matplotlib.pyplot as plt, sys
 from tqdm import tqdm
 import argparse
+import shutil
 
 from colmap_util import read_model, get_intrinsics, get_hws, get_extrinsic
 
@@ -25,7 +26,8 @@ def rescale_intrinsic(ixt, scale):
 def read_ixt_ext_hw_pointid(cams, images, points):
     # get image ids
     name2imageid = {img.name:img.id for img in images.values()}
-    names = sorted([img.name for img in images.values()])
+    names = [img.name for img in images.values()]
+    names.sort(key=lambda _:int(_[:-4]))
     imageids = [name2imageid[name] for name in names]
 
     # ixts
@@ -98,6 +100,9 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(output_sfm_dir, 'sparse_depth'), exist_ok=True)
     os.makedirs(os.path.join(output_sfm_dir, 'intrinsic'), exist_ok=True)
     os.makedirs(os.path.join(output_sfm_dir, 'pose'), exist_ok=True)
+    # create a folder for the images with sparse depth
+    img_w_sdpt_dir = os.path.join(output_sfm_dir, 'images_w_sparse_depth')
+    os.makedirs(img_w_sdpt_dir, exist_ok=True)
 
     for i, name in tqdm(enumerate(names), desc=f'extracting depth'):
         img_id = name.split('.')[0]
@@ -109,6 +114,13 @@ if __name__ == '__main__':
         
         ixt = rescale_intrinsic(ixt, scale)
         sparse_depth = get_sparse_depth(points, ixt, ext, point_id, h=tgt_h, w=tgt_w)
+        # check if sparse_depth is a list or numpy array
+        if isinstance(sparse_depth, list):
+            print(f"No sparse depth for {name}")
+            continue
+        else:
+            # copy image to img_w_sdpt_dir
+            shutil.copy(os.path.join(output_sfm_dir, 'images', name), os.path.join(img_w_sdpt_dir, name))
         sparse_depth = sparse_depth[:crop_h, :crop_w]
 
         np.savetxt(os.path.join(output_sfm_dir, 'intrinsic', f'{img_id}.txt'), ixt)
