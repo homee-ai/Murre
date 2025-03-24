@@ -24,6 +24,13 @@ conda env create -f environment.yml
 ## Checkpoint
 The pretrained model weights can be downloaded from [here](https://drive.google.com/file/d/1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa/view?usp=sharing).
 
+You can use gdown to download the checkpoint directly:
+```
+pip install gdown
+gdown 1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa
+
+unzip Murre-ckpt.zip
+```
 
 ## Inference
 
